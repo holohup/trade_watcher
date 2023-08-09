@@ -21,7 +21,7 @@ async def save_tcs_trade(trades: OrderTrades):
         logging.error(f'could not save trades: {r}, {trades}')
 
 
-async def subscribe_to_tcs():
+async def watch_tcs_orders():
     async with AsyncClient(os.getenv('TCS_RO_TOKEN')) as client:
         while True:
             try:
@@ -37,11 +37,13 @@ async def subscribe_to_tcs():
                 if e.details == 'Stream removed':
                     logging.error('Stream removed error.')
                 else:
-                    logging.error(f'AuoRequestError, {e.details=}, {e.metadata=}, {e.code=}')
+                    logging.error(
+                        f'AuoRequestError, {e.details=}, {e.metadata=}, {e.code=}. {e.args=} {e=}'
+                    )
             except Exception as e:
                 logging.error(f'Unpredicted error: {e}')
                 raise e
 
 
 if __name__ == "__main__":
-    asyncio.run(subscribe_to_tcs())
+    asyncio.run(watch_tcs_orders())
