@@ -5,9 +5,9 @@ from pickle import dumps
 import redis.asyncio as redis
 from tinkoff.invest import AsyncClient, OrderTrades
 from tinkoff.invest.exceptions import AioRequestError
-
+import parsers
 import settings
-
+from messages import save_message
 
 logging.basicConfig(
     format="%(asctime)s %(levelname)s:%(message)s", level=logging.DEBUG
@@ -15,7 +15,7 @@ logging.basicConfig(
 trades_url = settings.get('TRADES_URL')
 
 
-async def save_tcs_trade(trades: OrderTrades):
+async def save_tcs_trades(trades: OrderTrades):
     logging.info(f'received new trades: {trades}')
     async with redis.from_url(trades_url) as client:
         r = await client.lpush('tcs_trades', dumps(trades))
@@ -34,13 +34,15 @@ async def watch_tcs_orders():
                         last_ping_time = trades.ping.time
                         logging.debug(f'received ping: {last_ping_time}')
                     if trades.order_trades is not None:
-                        await save_tcs_trade(trades.order_trades)
+                        await save_message(parsers.tcs(trades.order_trades))
+                        await save_tcs_trades(trades.order_trades)
             except AioRequestError as e:
                 if e.details == 'Stream removed':
                     logging.error('Stream removed error.')
                 else:
                     logging.error(
-                        f'AuoRequestError, {e.details=}, {e.metadata=}, {e.code=}. {e.args=} {e=}'
+                        f'AuoRequestError, {e.details=}, '
+                        f'{e.metadata=}, {e.code=}. {e.args=} {e=}'
                     )
             except Exception as e:
                 logging.error(f'Unpredicted error: {e}')
