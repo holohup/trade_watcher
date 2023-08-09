@@ -34,7 +34,10 @@ async def subscribe_to_tcs():
                     if trades.order_trades is not None:
                         await save_tcs_trade(trades.order_trades)
             except AioRequestError as e:
-                logging.error(f'AuoRequestError, {e.details=}, {e.metadata=}, {e.code=}')
+                if e.details == 'Stream removed':
+                    logging.error('Stream removed error.')
+                else:
+                    logging.error(f'AuoRequestError, {e.details=}, {e.metadata=}, {e.code=}')
             except Exception as e:
                 logging.error(f'Unpredicted error: {e}')
                 raise e
