@@ -46,4 +46,7 @@ async def watch_tcs_orders():
 
 
 if __name__ == "__main__":
-    asyncio.run(watch_tcs_orders())
+    try:
+        asyncio.run(watch_tcs_orders())
+    except (KeyboardInterrupt, SystemExit):
+        pass
