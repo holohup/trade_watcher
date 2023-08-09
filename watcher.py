@@ -5,15 +5,20 @@ import redis.asyncio as redis
 from pickle import dumps
 from tinkoff.invest import AsyncClient, OrderTrades
 from tinkoff.invest.exceptions import AioRequestError
-
+import logging
 
 load_dotenv()
+logging.basicConfig(
+    format="%(asctime)s %(levelname)s:%(message)s", level=logging.DEBUG
+)
 
 
 async def save_tcs_trade(trades: OrderTrades):
-    print(trades)
+    logging.info(f'received new trades: {trades}')
     async with redis.from_url(os.getenv('REDIS_URL')) as client:
         r = await client.lpush('tcs_trades', dumps(trades))
+    if not r:
+        logging.error(f'could not save trades: {r}, {trades}')
 
 
 async def subscribe_to_tcs():
@@ -25,11 +30,13 @@ async def subscribe_to_tcs():
                 ):
                     if trades.ping is not None:
                         last_ping_time = trades.ping.time
+                        logging.debug(f'received ping: {last_ping_time}')
                     if trades.order_trades is not None:
                         await save_tcs_trade(trades.order_trades)
             except AioRequestError as e:
-                print(f'AuoRequestError, {e.details=}, {e.metadata=}, {e.code=}')
+                logging.error(f'AuoRequestError, {e.details=}, {e.metadata=}, {e.code=}')
             except Exception as e:
+                logging.error(f'Unpredicted error: {e}')
                 raise e
 
 
