@@ -12,7 +12,7 @@ import settings
 from messages import save_message
 
 PAUSE_BETWEEN_STREAM_CHECKS = 60
-SECONDS_BETWEEN_PINGS = 120
+SECONDS_BETWEEN_PINGS = 121
 
 logging.basicConfig(
     format="%(asctime)s %(levelname)s:%(message)s", level=logging.DEBUG
