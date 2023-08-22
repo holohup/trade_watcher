@@ -1,5 +1,6 @@
-import settings
 import redis.asyncio as redis
+
+import settings
 
 messages_url = settings.get('MESSAGES_URL')
 r = redis.from_url(messages_url)

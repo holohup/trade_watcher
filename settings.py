@@ -1,8 +1,9 @@
 import json
 import logging
+from os import getenv
 from urllib.error import HTTPError
 from urllib.request import urlopen
-from os import getenv
+
 from dotenv import load_dotenv
 
 logging.basicConfig(

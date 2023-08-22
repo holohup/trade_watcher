@@ -1,8 +1,9 @@
 from pickle import loads
-import settings
 
 import redis
 from tinkoff.invest.schemas import Bond, Currency, Etf, Future, Share
+
+import settings
 
 R = redis.Redis.from_url(settings.get('TCS_ASSETS_URL'))
 

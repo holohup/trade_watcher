@@ -1,6 +1,7 @@
-from repo import TCSAssetRepo
-from tinkoff.invest import OrderTrades, OrderDirection
+from tinkoff.invest import OrderDirection, OrderTrades
 from tinkoff.invest.utils import quotation_to_decimal
+
+from repo import TCSAssetRepo
 
 
 def tcs(trades: OrderTrades) -> str:
