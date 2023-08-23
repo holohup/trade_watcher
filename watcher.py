@@ -76,11 +76,12 @@ async def manage_streams():
                 f'current time: {current_time.strftime("%H:%M:%S")} '
                 f'last ping: {last_ping_time.strftime("%H:%M:%S")}'
             )
+            print('before cancel')
             stream_task.cancel()
             while not stream_task.done():
                 logging.debug('Not cancelled yet, sleeping 1 more second.')
                 await asyncio.sleep(1)
-            stream_task = create_stream_task()
+            stream_task = await create_stream_task()
 
 
 if __name__ == "__main__":
