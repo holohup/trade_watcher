@@ -78,6 +78,7 @@ async def manage_streams():
             )
             stream_task.cancel()
             while not stream_task.cancelled():
+                logging.debug('Not cancelled yet, sleeping 1 more second.')
                 await asyncio.sleep(1)
             stream_task = create_stream_task()
 
