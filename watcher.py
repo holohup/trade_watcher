@@ -57,15 +57,16 @@ async def watch_tcs_orders():
                 raise e
 
 
-def create_stream_task():
+async def create_stream_task():
     loop = asyncio.get_event_loop()
-    return loop.create_task(watch_tcs_orders())
+    stream_task = loop.create_task(watch_tcs_orders())
+    await asyncio.sleep(SECONDS_BETWEEN_PINGS)
+    return stream_task
 
 
 async def manage_streams():
     logging.info('Starting TCS stream')
-    stream_task = create_stream_task()
-    await asyncio.sleep(SECONDS_BETWEEN_PINGS)
+    stream_task = await create_stream_task()
     while True:
         await asyncio.sleep(PAUSE_BETWEEN_STREAM_CHECKS)
         current_time = datetime.now(timezone.utc)
