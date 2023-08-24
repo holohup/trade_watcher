@@ -2,7 +2,6 @@ import asyncio
 import logging
 from datetime import datetime, timezone
 from pickle import dumps
-
 import redis.asyncio as redis
 from tinkoff.invest import AsyncClient, OrderTrades
 from tinkoff.invest.exceptions import AioRequestError
